@@ -1,0 +1,18 @@
+version: "3.3"
+
+services:
+  fastapi:
+    image: cr.yandex/opop/notification_service:latest
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --forwarded-allow-ips='*' --proxy-headers
+    volumes:
+      - "~/notification_service/settings.ini:/notification_service/settings.ini"
+      - "/opt/root.crt:/opt/root.crt"
+    ports:
+      - "8111:8000"
+
+  consumer:
+    image: cr.yandex/opop/notification_service:latest
+    command: python ./app/clients/consumer.py
+    volumes:
+      - "~/notification_service/settings.ini:/notification_service/settings.ini"
+      - "/opt/root.crt:/opt/root.crt"
